@@ -108,7 +108,7 @@ def create_sale(request):
 @login_required
 def edit_sale(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id, salesperson=request.user)
-    products = Product.objects.all()
+    products = Product.objects.filter()
     return render(request, 'pos/edit_sale.html', {'sale': sale, 'products': products})
 
 def sale_detail(request, sale_id):
@@ -168,12 +168,12 @@ def remove_item(request, item_id):
         return HttpResponse(table_html)
     return HttpResponse(status=400)
 
-@login_required
-def complete_sale(request, sale_id):
-    sale = get_object_or_404(Sale, id=sale_id, salesperson=request.user)
-    sale.status = Sale.COMPLETED
-    sale.save()
-    return redirect('dashboard')
+# @login_required
+# def complete_sale(request, sale_id):
+#     sale = get_object_or_404(Sale, id=sale_id, salesperson=request.user)
+#     sale.status = Sale.COMPLETED
+#     sale.save()
+#     return redirect('dashboard')
 
 @login_required
 def cancel_sale(request, sale_id):
@@ -182,6 +182,25 @@ def cancel_sale(request, sale_id):
     sale.save()
     
     return redirect('dashboard')
+
+@login_required
+def complete_sale(request, sale_id):
+    sale = get_object_or_404(Sale, id=sale_id, salesperson=request.user)
+    if sale.status != Sale.COMPLETED:
+        for item in sale.items.all():
+            if item.product.stock >= item.quantity:
+                item.product.stock -= item.quantity
+                item.product.save()
+            else:
+                # messages.error(request, f"Not enough stock for {item.product.name}.")
+                HttpResponse(f"Not enough stock for {item.product.name}.")
+                return redirect('edit_sale', sale_id=sale.id)
+        sale.status = Sale.COMPLETED
+        sale.save()
+        # messages.success(request, 'Sale completed successfully.')
+        HttpResponse("Sale completed successfully.")
+    return redirect('dashboard')
+
 
 @login_required
 def save_sale(request, sale_id):
