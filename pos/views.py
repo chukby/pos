@@ -53,6 +53,8 @@ def register_salesperson(request):
 @login_required
 def dashboard(request):
     today = timezone.now().date()
+    store_name = settings.STORE_NAME
+
      # Get all the sales by a particular salesperson from the database for today
     sales_today_sp = Sale.objects.filter(
         salesperson=request.user,
@@ -70,25 +72,14 @@ def dashboard(request):
         status=Sale.COMPLETED,
     )
 
-    store_name = settings.STORE_NAME
-
-  
-
     # Get the total sales amount by the salesperson for today
     sales_today_sp_total = sales_today_sp.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     # Get the total sales amount by the salesperson historically
     sales_total_sp  = sp_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
-
     store_sales = Sale.objects.filter(status=Sale.COMPLETED)
-    
 
     sales_total_store = store_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-
-
-
-
-
 
     context = {
         'sales_today_sp_count': sales_today_sp.count(),
