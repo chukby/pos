@@ -1,0 +1,76 @@
+<!-- templates/pos/dashboard.html -->
+{% extends 'pos/base.html' %}
+{% load humanize %}
+{% block content %}
+<div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold mb-4 sm:mb-0"> Dashboard</h1>
+    <div class="text-right">
+        <p class="text-sm text-gray-500"><i></i><span class="text-lg font-semibold">{{ salesperson }}</span></p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Stats -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Sales Today</h2>
+        <p class="text-2xl font-bold">{{ sales_today_sp_count }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Store Sales Count Today</h2>
+        <p class="text-2xl font-bold">{{ sales_today_store_count }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Today Sales Total ({{ salesperson | capfirst }})</h2>
+        <p class="text-2xl font-bold">$ {{ sales_today_sp_total | intcomma }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Sales Total {{ salesperson | capfirst }}</h2>
+        <p class="text-2xl font-bold">$ {{ sales_total_sp  | intcomma }}</p>
+    </div>
+
+
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Store Sales History</h2>
+        <p class="text-2xl font-bold">{{ store_sales_count }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Sales Total Store</h2>
+        <p class="text-2xl font-bold">$ {{ sales_total_store  | intcomma }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Customer Count</h2>
+        <p class="text-2xl font-bold">xxx </p>  
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Top Cashiers</h2>
+        <p class="text-2xl font-bold">xxx</p>
+    </div>
+</div>
+
+<!-- Recent Sales -->
+<div class="col-span-1 sm:col-span-2 lg:col-span-4 bg-white p-6 rounded-lg shadow mt-4">
+    <h2 class="text-xl font-semibold mb-4">Recent Sales</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-gray-50">
+                    <th class="px-4 py-2 text-left">SALE ID</th>
+                    <th class="px-4 py-2 text-left">Amount</th>
+                    <th class="px-4 py-2 text-left">Status</th>
+                    <th class="px-4 py-2 text-left">Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in recent_sales_sp %}
+                <tr class="border-t">
+                    <td class="px-4 py-2"><a class="text-gray-600 font-semibold" href="{% url 'sale_detail' sale.id %}">{{ sale.id }}</a></td>
+                    <td class="px-4 py-2">${{ sale.total_amount }}</td>
+                    <td class="px-4 py-2">{{ sale.get_status_display }}</td>
+                    <td class="px-4 py-2">{{ sale.date_created }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

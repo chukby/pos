@@ -1,0 +1,107 @@
+<!-- templates/pos/base.html -->
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100" x-data="{ sidebarOpen: false }">
+    <!-- Add CSRF Token Meta Tag -->
+    {% csrf_token %}
+    <!-- Add HTMX CSRF Configuration -->
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            event.detail.headers['X-CSRFToken'] = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        });
+    </script>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div :class="sidebarOpen ? 'block' : 'hidden'" 
+             class="fixed inset-0 z-40 bg-gray-800 text-white md:hidden">
+            <div class="p-4">
+                <button @click="sidebarOpen = false" class="text-white font-bold">
+                   <span class="text-2xl p-2">X</span>
+                </button>
+            </div>
+            <nav class="mt-4">
+                <a href="{% url 'dashboard' %}" 
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'dashboard' %}bg-gray-700{% endif %}">
+                    Dashboard
+                </a>
+                <a href="{% url 'create_sale' %}"
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'create_sale' %}bg-gray-700{% endif %}">
+                    New Sale
+                </a>
+                <a href="{% url 'saved_sales' %}"
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'saved_sales' %}bg-gray-700{% endif %}">
+                    Saved Sales
+                </a>
+                <a href="{% url 'sales_history' %}"
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'sales_history' %}bg-gray-700{% endif %}">
+                    Sales History
+                </a> 
+                <div class="mt-auto p-4">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full px-4 py-2 text-left hover:bg-gray-700">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+        <div class="hidden md:block w-64 bg-gray-800 text-white">
+            <div class="p-4">
+                <h1 class="text-2xl font-bold">{{ store_name }}</h1>
+            </div>
+            <nav class="mt-4">
+                <a href="{% url 'dashboard' %}" 
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'dashboard' %}bg-gray-700{% endif %}">
+                    Dashboard
+                </a>
+                <a href="{% url 'create_sale' %}"
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'create_sale' %}bg-gray-700{% endif %}">
+                    New Sale
+                </a>
+                <a href="{% url 'saved_sales' %}"
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'saved_sales' %}bg-gray-700{% endif %}">
+                    Saved Sales
+                </a>
+                <a href="{% url 'sales_history' %}"
+                   class="block px-4 py-2 hover:bg-gray-700 {% if request.resolver_match.url_name == 'sales_history' %}bg-gray-700{% endif %}">
+                    Sales History
+                </a>
+                <div class="mt-auto p-4">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full px-4 py-2 text-left hover:bg-gray-700">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="p-4 md:hidden">
+                <button @click="sidebarOpen = true" class="text-gray-800">
+                    <svg viewBox="0 0 100 80" width="40" height="40">
+                        <rect width="100" height="20"></rect>
+                        <rect y="30" width="100" height="20"></rect>
+                        <rect y="60" width="100" height="20"></rect>
+                      </svg>
+                </button>
+            </div>
+            <div class="p-8">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

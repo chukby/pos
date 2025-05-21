@@ -1,0 +1,51 @@
+<!-- templates/pos/saved_sales.html -->
+{% extends 'pos/base.html' %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Stats -->
+    <div class="bg-white p-6 rounded-lg shadow col-span-1 md:col-span-1">
+        <h2 class="text-xl font-semibold mb-4">Sale #{{ sale.id }}</h2>
+        <p class="text-sm font-bold">Created: {{ sale.date_created }}</p>
+        <p class="text-sm font-bold">Last Modified: {{ sale.date_modified }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow col-span-1 md:col-span-1">
+        <h2 class="text-xl font-semibold mb-4">Total Amount</h2>
+        <p class="text-3xl font-bold">${{ sale.total_amount }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow col-span-1 md:col-span-1">
+        <h2 class="text-xl font-semibold mb-4">Sale Status: <span>{{ sale.get_status_display }}</span></h2>
+        <p class="text-3xl font-bold">Salesperson: {{ sale.salesperson }}</p>
+    </div>
+</div>
+    
+    <!--  Sale Detail -->
+    <div class="md:col-span-3 bg-white p-6 rounded-lg shadow">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    
+                    <tr class="bg-gray-50">
+                        <th class="px-6 py-3 text-left">S/N</th>
+                        <th class="px-6 py-3 text-left">Item</th> 
+                        <th class="px-6 py-3 text-left">Quantity</th> 
+                        <th class="px-6 py-3 text-left">Amount</th>
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in sale.items.all %}
+                    <tr class="border-t">
+                        <td class="px-6 py-4 text-bold">{{ forloop.counter }}</td>
+                        <td class="px-6 py-4">{{ item.product.name }}</td>
+                        <td class="px-6 py-4">{{ item.quantity }}</td>
+                        <td class="px-6 py-4">${{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
