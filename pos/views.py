@@ -108,7 +108,7 @@ def create_sale(request):
 @login_required
 def edit_sale(request, sale_id):
     sale = get_object_or_404(Sale, id=sale_id, salesperson=request.user)
-    products = Product.objects.filter()
+    products = Product.objects.filter(stock__gt=0)
     return render(request, 'pos/edit_sale.html', {'sale': sale, 'products': products})
 
 def sale_detail(request, sale_id):
